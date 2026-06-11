@@ -1,8 +1,7 @@
 @echo off
 cd ../
 cd .haxelib/lime/git/
-git submodule sync --recursive
-git submodule update --init --recursive --force
+git submodule update
 cd ../../../
-haxelib run lime rebuild cpp -release
+haxelib run lime rebuild cpp -clean
 pause
