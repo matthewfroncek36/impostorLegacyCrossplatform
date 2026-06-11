@@ -30,6 +30,7 @@ jobs:
 
       - name: Install / Update Libraries
         id: lib-install
+        if: ${{ steps.cache-restore.outputs.cache-hit == 'false' }}
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
@@ -118,6 +119,7 @@ jobs:
 
       - name: Install / Update Libraries
         id: lib-install
+        if: ${{ steps.cache-restore.outputs.cache-hit == 'false' }}
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
@@ -198,6 +200,7 @@ jobs:
 
       - name: Install / Update Libraries
         id: lib-install
+        if: ${{ steps.cache-restore.outputs.cache-hit == 'false' }}
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
@@ -286,6 +289,7 @@ jobs:
 
       - name: Install / Update Libraries
         id: lib-install
+        if: ${{ steps.cache-restore.outputs.cache-hit == 'false' }}
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
@@ -391,6 +395,7 @@ jobs:
 
       - name: Install / Update Libraries
         id: lib-install
+        if: ${{ steps.cache-restore.outputs.cache-hit == 'false' }}
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
