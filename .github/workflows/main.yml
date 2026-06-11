@@ -52,7 +52,6 @@ jobs:
           git submodule sync
           git submodule update
           cd ../../../
-          haxelib run lime rebuild hxcpp
           haxelib run lime rebuild cpp
 
       - name: Build Game
@@ -150,7 +149,6 @@ jobs:
           git submodule sync
           git submodule update
           cd ../../../
-          haxelib run lime rebuild hxcpp
           haxelib run lime rebuild cpp
 
       - name: Build Game
@@ -236,7 +234,6 @@ jobs:
           git submodule sync
           git submodule update
           cd ../../../
-          haxelib run lime rebuild hxcpp
           haxelib run lime rebuild cpp
 
       - name: Build Game
@@ -334,7 +331,6 @@ jobs:
           git submodule sync
           git submodule update
           cd ../../../
-          haxelib run lime rebuild hxcpp
           haxelib run lime rebuild cpp
 
       - name: Build Game
@@ -440,7 +436,7 @@ jobs:
           haxe compile.hxml
           cd ../../../../../
 
-      - name: Setup Android
+      - name: Se Up Android
         id: setup-android
         run: |
           haxelib run lime config ANDROID_SDK $ANDROID_SDK_ROOT
@@ -457,7 +453,6 @@ jobs:
           git submodule sync
           git submodule update
           cd ../../../
-          haxelib run lime rebuild hxcpp
           haxelib run lime rebuild cpp
 
       - name: Build Game
