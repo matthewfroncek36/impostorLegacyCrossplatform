@@ -38,13 +38,16 @@ jobs:
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
-          cd ../../../
+          cd ../../../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
         run: |
-          .\"projFiles/rebuild-lime-tools.bat"
-        shell: cmd
+          cd ./.haxelib/lime/git/
+          git submodule sync --recursive
+          git submodule update --init --recursive --force
+          cd ../../../
+          haxelib run lime rebuild cpp -release
 
       - name: Build Game
         id: game-compile
@@ -120,13 +123,16 @@ jobs:
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
-          cd ../../../
+          cd ../../../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
         run: |
-          chmod +x ./projFiles/rebuild-lime-tools.sh
-          sh ./projFiles/rebuild-lime-tools.sh
+          cd ./.haxelib/lime/git/
+          git submodule sync --recursive
+          git submodule update --init --recursive --force
+          cd ../../../
+          haxelib run lime rebuild cpp -release
 
       - name: Build Game
         id: game-compile
@@ -197,13 +203,16 @@ jobs:
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
-          cd ../../../
+          cd ../../../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
         run: |
-          chmod +x ./projFiles/rebuild-lime-tools.sh
-          sh ./projFiles/rebuild-lime-tools.sh
+          cd ./.haxelib/lime/git/
+          git submodule sync --recursive
+          git submodule update --init --recursive --force
+          cd ../../../
+          haxelib run lime rebuild cpp -release
 
       - name: Build Game
         id: game-compile
@@ -274,13 +283,16 @@ jobs:
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
-          cd ../../../
+          cd ../../../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
         run: |
-          chmod +x ./projFiles/rebuild-lime-tools.sh
-          sh ./projFiles/rebuild-lime-tools.sh
+          cd ./.haxelib/lime/git/
+          git submodule sync --recursive
+          git submodule update --init --recursive --force
+          cd ../../../
+          haxelib run lime rebuild cpp -release
 
       - name: Build Game
         id: game-compile
@@ -368,13 +380,16 @@ jobs:
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
-          cd ../../../
+          cd ../../../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
         run: |
-          chmod +x ./projFiles/rebuild-lime-tools.sh
-          sh ./projFiles/rebuild-lime-tools.sh
+          cd ./.haxelib/lime/git/
+          git submodule sync --recursive
+          git submodule update --init --recursive --force
+          cd ../../../
+          haxelib run lime rebuild cpp -release
 
       - name: Setup Android
         id: setup-android
