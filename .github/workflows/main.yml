@@ -53,7 +53,7 @@ jobs:
           git submodule update
           cd ../../../
           haxelib run lime rebuild hxcpp
-          haxelib run lime rebuild windows -64
+          haxelib run lime rebuild cpp
 
       - name: Build Game
         id: game-compile
@@ -151,7 +151,7 @@ jobs:
           git submodule update
           cd ../../../
           haxelib run lime rebuild hxcpp
-          haxelib run lime rebuild linux -64
+          haxelib run lime rebuild cpp
 
       - name: Build Game
         id: game-compile
@@ -237,7 +237,7 @@ jobs:
           git submodule update
           cd ../../../
           haxelib run lime rebuild hxcpp
-          haxelib run lime rebuild mac -64
+          haxelib run lime rebuild cpp
 
       - name: Build Game
         id: game-compile
@@ -335,7 +335,7 @@ jobs:
           git submodule update
           cd ../../../
           haxelib run lime rebuild hxcpp
-          haxelib run lime rebuild tools
+          haxelib run lime rebuild cpp
 
       - name: Build Game
         id: game-compile
@@ -440,6 +440,14 @@ jobs:
           haxe compile.hxml
           cd ../../../../../
 
+      - name: Setup Android
+        id: setup-android
+        run: |
+          haxelib run lime config ANDROID_SDK $ANDROID_SDK_ROOT
+          haxelib run lime config ANDROID_NDK_ROOT ${{ steps.ndk-install.outputs.ndk-path }}
+          haxelib run lime config JAVA_HOME ${{ env.JAVA_HOME }}
+          haxelib run lime config ANDROID_SETUP true
+
       - name: Rebuild Lime Tools
         id: fix-lime
         if: steps.cache-restore.outputs.cache-hit != 'true'
@@ -450,15 +458,7 @@ jobs:
           git submodule update
           cd ../../../
           haxelib run lime rebuild hxcpp
-          haxelib run lime rebuild android -64
-
-      - name: Setup Android
-        id: setup-android
-        run: |
-          haxelib run lime config ANDROID_SDK $ANDROID_SDK_ROOT
-          haxelib run lime config ANDROID_NDK_ROOT ${{ steps.ndk-install.outputs.ndk-path }}
-          haxelib run lime config JAVA_HOME ${{ env.JAVA_HOME }}
-          haxelib run lime config ANDROID_SETUP true
+          haxelib run lime rebuild cpp
 
       - name: Build Game
         id: game-compile-lime
