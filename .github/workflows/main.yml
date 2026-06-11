@@ -36,6 +36,8 @@ jobs:
           haxelib run hxpkg install
 
       - name: Set up HXCPP
+        id: setup-hxcpp
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
@@ -43,6 +45,7 @@ jobs:
 
       - name: Rebuild Lime Tools
         id: fix-lime
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/lime/git/
           git submodule sync
@@ -114,7 +117,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libvlc-dev libvlccore-dev libvlccore9
-          sudo apt install build-essential
+          sudo apt install libgl1-mesa-dev libglu1-mesa-dev g++ g++-multilib gcc-multilib libasound2-dev libx11-dev libxext-dev libxi-dev libxrandr-dev libxinerama-dev libpulse-dev
           sudo apt install libwayland-dev
 
       - name: Install / Update Libraries
@@ -125,6 +128,8 @@ jobs:
           haxelib run hxpkg install
 
       - name: Set up HXCPP
+        id: setup-hxcpp
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
@@ -132,6 +137,7 @@ jobs:
 
       - name: Rebuild Lime Tools
         id: fix-lime
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/lime/git/
           git submodule sync
@@ -198,6 +204,11 @@ jobs:
             export/release/macos/haxe/
             export/release/macos/obj/
 
+      - name: Install XCode
+        id: xcode-install
+        run: |
+          xcode-select --install
+
       - name: Install / Update Libraries
         id: lib-install
         if: steps.cache-restore.outputs.cache-hit != 'true'
@@ -206,6 +217,8 @@ jobs:
           haxelib run hxpkg install
 
       - name: Set up HXCPP
+        id: setup-hxcpp
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
@@ -213,6 +226,7 @@ jobs:
 
       - name: Rebuild Lime Tools
         id: fix-lime
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/lime/git/
           git submodule sync
@@ -284,7 +298,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libvlc-dev libvlccore-dev libvlccore9
-          sudo apt install build-essential
+          sudo apt install libgl1-mesa-dev libglu1-mesa-dev g++ g++-multilib gcc-multilib libasound2-dev libx11-dev libxext-dev libxi-dev libxrandr-dev libxinerama-dev libpulse-dev
           sudo apt install libwayland-dev
 
       - name: Install / Update Libraries
@@ -295,6 +309,8 @@ jobs:
           haxelib run hxpkg install
 
       - name: Set up HXCPP
+        id: setup-hxcpp
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
@@ -302,6 +318,7 @@ jobs:
 
       - name: Rebuild Lime Tools
         id: fix-lime
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/lime/git/
           git submodule sync
@@ -390,7 +407,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libvlc-dev libvlccore-dev libvlccore9
-          sudo apt install build-essential
+          sudo apt install libgl1-mesa-dev libglu1-mesa-dev g++ g++-multilib gcc-multilib libasound2-dev libx11-dev libxext-dev libxi-dev libxrandr-dev libxinerama-dev libpulse-dev
           sudo apt install libwayland-dev
 
       - name: Install / Update Libraries
@@ -401,6 +418,8 @@ jobs:
           haxelib run hxpkg install
 
       - name: Set up HXCPP
+        id: setup-hxcpp
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
@@ -408,6 +427,7 @@ jobs:
 
       - name: Rebuild Lime Tools
         id: fix-lime
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/lime/git/
           git submodule sync
