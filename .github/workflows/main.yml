@@ -34,6 +34,12 @@ jobs:
           haxelib install hxpkg
           haxelib run hxpkg install
 
+      - name: Rebuild Lime Tools
+        id: fix-lime
+        run: |
+          .\"projFiles/rebuild-lime-tools.bat"
+        shell: cmd
+
       - name: Build Game
         id: game-compile
         run: |
@@ -104,6 +110,12 @@ jobs:
           haxelib install hxpkg
           haxelib run hxpkg install
 
+      - name: Rebuild Lime Tools
+        id: fix-lime
+        run: |
+          chmod +x ./projFiles/rebuild-lime-tools.sh
+          sh ./projFiles/rebuild-lime-tools.sh
+
       - name: Build Game
         id: game-compile
         run: |
@@ -169,6 +181,12 @@ jobs:
           haxelib install hxpkg
           haxelib run hxpkg install
 
+      - name: Rebuild Lime Tools
+        id: fix-lime
+        run: |
+          chmod +x ./projFiles/rebuild-lime-tools.sh
+          sh ./projFiles/rebuild-lime-tools.sh
+
       - name: Build Game
         id: game-compile
         run: |
@@ -233,6 +251,12 @@ jobs:
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
+
+      - name: Rebuild Lime Tools
+        id: fix-lime
+        run: |
+          chmod +x ./projFiles/rebuild-lime-tools.sh
+          sh ./projFiles/rebuild-lime-tools.sh
 
       - name: Build Game
         id: game-compile
@@ -315,6 +339,12 @@ jobs:
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
+
+      - name: Rebuild Lime Tools
+        id: fix-lime
+        run: |
+          chmod +x ./projFiles/rebuild-lime-tools.sh
+          sh ./projFiles/rebuild-lime-tools.sh
 
       - name: Setup Android
         id: setup-android
