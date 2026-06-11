@@ -44,9 +44,10 @@ jobs:
         id: fix-lime
         run: |
           cd ./.haxelib/lime/git/
+          git submodule sync
           git submodule update
           cd ../../../
-          haxelib run lime rebuild cpp -clean
+          haxelib run lime rebuild cpp -release -clean
 
       - name: Build Game
         id: game-compile
@@ -110,7 +111,9 @@ jobs:
       - name: Install LibVLC
         id: libvlc-install
         run: |
-          sudo apt-get install libvlc-dev libvlccore-dev
+          sudo apt update
+          sudo apt install libvlc-dev libvlccore-dev libvlccore9
+          sudo apt install build-essential
 
       - name: Install / Update Libraries
         id: lib-install
@@ -128,9 +131,10 @@ jobs:
         id: fix-lime
         run: |
           cd ./.haxelib/lime/git/
+          git submodule sync
           git submodule update
           cd ../../../
-          haxelib run lime rebuild cpp -clean
+          haxelib run lime rebuild cpp -release -clean
 
       - name: Build Game
         id: game-compile
@@ -207,9 +211,10 @@ jobs:
         id: fix-lime
         run: |
           cd ./.haxelib/lime/git/
+          git submodule sync
           git submodule update
           cd ../../../
-          haxelib run lime rebuild cpp -clean
+          haxelib run lime rebuild cpp -release -clean
 
       - name: Build Game
         id: game-compile
@@ -270,6 +275,13 @@ jobs:
             export/release/html5/haxe/
             export/release/html5/obj/
 
+      - name: Install LibVLC
+        id: libvlc-install
+        run: |
+          sudo apt update
+          sudo apt install libvlc-dev libvlccore-dev libvlccore9
+          sudo apt install build-essential
+
       - name: Install / Update Libraries
         id: lib-install
         run: |
@@ -286,9 +298,10 @@ jobs:
         id: fix-lime
         run: |
           cd ./.haxelib/lime/git/
+          git submodule sync
           git submodule update
           cd ../../../
-          haxelib run lime rebuild cpp -clean
+          haxelib run lime rebuild cpp -release -clean
 
       - name: Build Game
         id: game-compile
@@ -366,6 +379,13 @@ jobs:
             export/release/android/haxe/
             export/release/android/obj/
 
+      - name: Install LibVLC
+        id: libvlc-install
+        run: |
+          sudo apt update
+          sudo apt install libvlc-dev libvlccore-dev libvlccore9
+          sudo apt install build-essential
+
       - name: Install / Update Libraries
         id: lib-install
         run: |
@@ -382,9 +402,10 @@ jobs:
         id: fix-lime
         run: |
           cd ./.haxelib/lime/git/
+          git submodule sync
           git submodule update
           cd ../../../
-          haxelib run lime rebuild cpp -clean
+          haxelib run lime rebuild cpp -release -clean
 
       - name: Setup Android
         id: setup-android
