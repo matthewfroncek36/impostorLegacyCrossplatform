@@ -118,8 +118,6 @@ class Project extends HXProject
         if (!isLinux()) setupIcons();
         if (isAndroid()) setupAndroid();
         if (isIOS()) setupIOS();
-
-        if (isCPP()) buildHXCPPTools();
     }
 
     function setupApplication()
@@ -336,46 +334,6 @@ class Project extends HXProject
     function setupIOS()
     {
         config.set('ios.deployment', '16.0');
-    }
-
-    /**
-     * Isn't it annoying when HXCPP asks you to set it up every single time you install it or update it?
-     *
-     * Here we do it for you! cuz seriously this annoys me so much as well lol.
-     *
-     * *Also prevents GitHub workflows from failing*
-     */
-    function buildHXCPPTools()
-    {
-        var path:String = getLibraryPath('hxcpp');
-
-        if (path.toLowerCase().startsWith('error') || !FileSystem.exists(path))
-        {
-            error('Couldn\'t find the library "hxcpp" while targetting C++! Is it installed?');
-        }
-
-        var hxcppN:String = Path.join([path, "hxcpp.n"]);
-
-        if (FileSystem.exists(hxcppN))
-        {
-            // hxcpp build tools were already set up
-            return;
-        }
-
-        var toolsPath:String = Path.join([path, "tools/hxcpp"]);
-        var oldDirectory:String = Sys.getCwd();
-        Sys.setCwd(toolsPath);
-
-        var process = new Process('haxe', ['compile.hxml']);
-
-        if (process.exitCode() != 0)
-        {
-            info("Couldn't compile HXCPP Tools. Is HXCPP installed properly?");
-        }
-
-        process.close();
-
-        Sys.setCwd(oldDirectory);
     }
 
     public function addHaxelib(name:String, version:String = ''):Void

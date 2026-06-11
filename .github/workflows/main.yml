@@ -34,6 +34,12 @@ jobs:
           haxelib install hxpkg
           haxelib run hxpkg install
 
+      - name: Set up HXCPP
+        run: |
+          cd ./.haxelib/hxcpp/git/tools/hxcpp/
+          haxe compile.hxml
+          cd ../../../../../
+
       - name: Rebuild Lime Tools
         id: fix-lime
         run: |
@@ -110,6 +116,12 @@ jobs:
           haxelib install hxpkg
           haxelib run hxpkg install
 
+      - name: Set up HXCPP
+        run: |
+          cd ./.haxelib/hxcpp/git/tools/hxcpp/
+          haxe compile.hxml
+          cd ../../../../../
+
       - name: Rebuild Lime Tools
         id: fix-lime
         run: |
@@ -181,6 +193,12 @@ jobs:
           haxelib install hxpkg
           haxelib run hxpkg install
 
+      - name: Set up HXCPP
+        run: |
+          cd ./.haxelib/hxcpp/git/tools/hxcpp/
+          haxe compile.hxml
+          cd ../../../../../
+
       - name: Rebuild Lime Tools
         id: fix-lime
         run: |
@@ -251,6 +269,12 @@ jobs:
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
+
+      - name: Set up HXCPP
+        run: |
+          cd ./.haxelib/hxcpp/git/tools/hxcpp/
+          haxe compile.hxml
+          cd ../../../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
@@ -339,6 +363,12 @@ jobs:
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
+
+      - name: Set up HXCPP
+        run: |
+          cd ./.haxelib/hxcpp/git/tools/hxcpp/
+          haxe compile.hxml
+          cd ../../../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
