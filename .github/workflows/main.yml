@@ -38,7 +38,7 @@ jobs:
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
-          cd ../../../../../
+          cd ../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
@@ -120,7 +120,7 @@ jobs:
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
-          cd ../../../../../
+          cd ../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
@@ -197,7 +197,7 @@ jobs:
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
-          cd ../../../../../
+          cd ../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
@@ -274,7 +274,7 @@ jobs:
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
-          cd ../../../../../
+          cd ../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
@@ -368,7 +368,7 @@ jobs:
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
-          cd ../../../../../
+          cd ../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
