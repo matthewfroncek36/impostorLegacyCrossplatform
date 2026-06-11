@@ -101,15 +101,19 @@
 			},
 			{
 				"name": "hxgamemode",
-                "version": "1.0.1"
+				"version": "1.0.1"
 			},
 			{
 				"name": "extension-androidtools",
-                "version": "2.2.2"
+				"version": "2.2.2"
 			},
 			{
 				"name": "extension-haptics",
-                "version": "1.0.4"
+				"version": "1.0.4"
+			},
+			{
+				"name": "format",
+                "version": "3.8.0"
 			}
 		]
 	}
