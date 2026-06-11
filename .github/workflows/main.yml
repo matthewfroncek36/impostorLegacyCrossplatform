@@ -31,7 +31,8 @@ jobs:
       - name: Install / Update Libraries
         id: lib-install
         run: |
-          haxe -cp setup -D analyzer-optimize --run Setup --no-vscheck -quiet
+          haxelib install hxpkg
+          haxelib run hxpkg install
 
       - name: Build Game
         id: game-compile
@@ -100,7 +101,8 @@ jobs:
       - name: Install / Update Libraries
         id: lib-install
         run: |
-          haxe -cp setup -D analyzer-optimize --run Setup -quiet
+          haxelib install hxpkg
+          haxelib run hxpkg install
 
       - name: Build Game
         id: game-compile
@@ -164,7 +166,8 @@ jobs:
       - name: Install / Update Libraries
         id: lib-install
         run: |
-          haxe -cp setup -D analyzer-optimize --run Setup -quiet
+          haxelib install hxpkg
+          haxelib run hxpkg install
 
       - name: Build Game
         id: game-compile
@@ -228,7 +231,8 @@ jobs:
       - name: Install / Update Libraries
         id: lib-install
         run: |
-          haxe -cp setup -D analyzer-optimize --run Setup -quiet
+          haxelib install hxpkg
+          haxelib run hxpkg install
 
       - name: Build Game
         id: game-compile
@@ -309,7 +313,8 @@ jobs:
       - name: Install / Update Libraries
         id: lib-install
         run: |
-          haxe -cp setup -D analyzer-optimize --run Setup -quiet
+          haxelib install hxpkg
+          haxelib run hxpkg install
 
       - name: Setup Android
         id: setup-android

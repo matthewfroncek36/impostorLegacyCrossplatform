@@ -263,7 +263,7 @@ class Project extends HXProject
         addHaxelib('openfl');
         addHaxelib('flixel');
         addHaxelib('flixel-addons');
-        addHaxelib('flixel-ui');
+        addHaxelib('flixel-ui', '2.6.4');
 
         addHaxelib('hscript-iris');
 
@@ -300,10 +300,9 @@ class Project extends HXProject
         if (!hasHaxeDefine('ASSET_REDIRECT'))
         {
             addAssetPath('assets/legacy', 'assets', null, ['*'], [], false, 'assets');
-            addAssetPath('assets/legacy', 'assets', null, ['*'], [], false, 'assets');
+            addAssetPath('assets/embeds', 'assets', null, ['*'], [], true, 'assets');
 
-            // thank you ashley for not including the dlc with the source >:(
-            //if (MODS_ALLOWED && INCLUDE_DLC) addAssetPath('content/securitydlc', 'assets', null, ['*'], [], false);
+            if (MODS_ALLOWED && INCLUDE_DLC) addAssetPath('content/securitydlc', 'assets', null, ['*'], [], false);
         }
 
         if (isDesktop())
