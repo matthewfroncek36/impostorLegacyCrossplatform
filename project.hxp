@@ -1,0 +1,648 @@
+import hxp.*;
+import lime.tools.*;
+import haxe.io.Bytes;
+import haxe.io.Path;
+import sys.io.Process;
+import sys.FileSystem;
+
+using StringTools;
+
+class Project extends HXProject
+{
+    /**
+     * The version of the mod.
+     */
+    static final VERSION:String = '1.1.0';
+
+    static final BUILD_NUMBER:Int = 6;
+
+    /**
+     * The title of the application.
+     */
+    static final TITLE:String = 'VS IMPOSTOR LEGACY';
+
+    /**
+     * The name of the executable file.
+     */
+    static final EXECUTABLE_NAME:String = 'ImpostorLegacy';
+
+    /**
+     * The unique package name of the application.
+     */
+    static final PACKAGE_NAME:String = 'com.motorfrog.impostor';
+
+    /**
+     * The company name behind this application.
+     */
+    static final COMPANY:String = 'MotorFrog';
+
+    /**
+     * A list of languages supported by this application.
+     */
+    static final LANGUAGES:Array<String> = [
+        'en', 'en-us', 'en-gb',
+        'fr', 'de', 'cs',
+        'hu', 'id', 'ga',
+        'it', 'jp', 'ko',
+        'es', // spanish latam technically combines all spanish variants, but there's 18 variants so im not gonna list them all
+        'no', 'pl', 'pt',
+        'pt-br', 'ro', 'tr'
+    ];
+
+    /**
+     * This only really matters for HTML5, since it's the target that uses preloaders the most.
+     * 
+     * Although it is technically used in all targets, no exceptions, however it's skipped the moment it's initiated.
+     */
+    static final PRELOADER_CLASS:String = 'flixel.system.FlxPreloader';
+
+    /**
+     * The package path to the class that starts the game.
+     */
+    static final MAIN_CLASS:String = 'Main';
+
+    /**
+     * The minimum Android SDK version this application can launch on.
+     *
+     * SDK 28 is Android 9.0, codenamed "Pie".
+     */
+    static final ANDROID_MINIMUM_SDK:Int = 28;
+
+    /**
+     * The Android SDK version this application is targetting.
+     *
+     * In other words, the Android SDK version this application is built on.
+     *
+     * SDK 35 is Android 15.0, codenamed "VanillaIceCream".
+     */
+    static final ANDROID_TARGET_SDK:Int = 35;
+
+    // ---------- FEATURE FLAGS ---------- //
+
+    /**
+     * Whether to build with the Discord Rich Presence API on targets that support it.
+     */
+    static final DISCORD_ALLOWED:Bool = true;
+
+    /**
+     * Whether to build with the Video Playback Backend on targets that support it.
+     */
+    static final VIDEOS_ALLOWED:Bool = true;
+
+    /**
+     * Whether to build with the Modding API on targets that support it.
+     */
+    static final MODS_ALLOWED:Bool = true;
+
+    /**
+     * Whether to build with the Crash Handler, has minor impact on performance.
+     */
+    static final CRASH_HANDLER:Bool = true;
+
+    /**
+     * Whether to include the Security DLC inside the mod.
+     */
+    static final INCLUDE_DLC:Bool = false;
+
+    public function new()
+    {
+        super();
+
+        setupApplication();
+        setupExportPath();
+        setupDefines();
+        setupMacros();
+        setupLibraries();
+        setupAssets();
+
+        if (!isLinux()) setupIcons();
+        if (isAndroid()) setupAndroid();
+        if (isIOS()) setupIOS();
+
+        if (isCPP()) buildHXCPPTools();
+    }
+
+    function setupApplication()
+    {
+        meta.version = VERSION;
+        meta.buildNumber = Std.string(BUILD_NUMBER);
+
+        meta.title = TITLE;
+        if (isIOS()) meta.title = ~/ /ig.replace(TITLE, '\u2002');
+
+        meta.company = COMPANY;
+        meta.packageName = PACKAGE_NAME;
+
+        sources.push('source');
+
+        languages = LANGUAGES;
+
+        app.main = MAIN_CLASS;
+        app.file = EXECUTABLE_NAME;
+        app.preloader = PRELOADER_CLASS;
+
+        window.fps = 60;
+        window.width = 1280;
+        window.height = 720;
+
+        window.orientation = isWeb() ? Orientation.AUTO : Orientation.LANDSCAPE;
+
+        window.vsync = false;
+        window.hardware = true;
+        window.allowHighDPI = true;
+
+        if (isWeb())
+        {
+            window.resizable = true;
+        }
+
+        if (isDesktop())
+        {
+            window.resizable = true;
+            window.fullscreen = false;
+        }
+
+        if (isMobile())
+        {
+            window.resizable = false;
+            window.fullscreen = true;
+            window.borderless = true;
+            window.width = 0;
+            window.height = 0;
+        }
+
+        if (isAndroid())
+        {
+            config.set('android.minimum-sdk-version', ANDROID_MINIMUM_SDK);
+            config.set('android.target-sdk-version', ANDROID_TARGET_SDK);
+        }
+
+        window.background = 0xFF000000;
+    }
+
+    function setupExportPath()
+    {
+        var exportPath:String = 'export/${isDebug() ? 'debug' : 'release'}';
+
+        if (hasHaxeDefine('FEATURE_DEBUG_TRACY')) exportPath += '-tracy';
+
+        app.path = exportPath;
+    }
+
+    function setupDefines()
+    {
+        setHaxeDefine('LINC_LUA_RELATIVE_DYNAMIC_LIB');
+
+        removeHaxeDefine('FLX_RECORD');
+
+        setHaxeDefine('FLX_NO_HEALTH');
+        setHaxeDefine('FLX_NO_FOCUS_LOST_SCREEN');
+
+        if (CRASH_HANDLER)
+        {
+            setHaxeDefine('openfl-enable-handle-error');
+            setHaxeDefine('HXCPP_CHECK_POINTER');
+            setHaxeDefine('HXCPP_STACK_LINE');
+            setHaxeDefine('HXCPP_STACK_TRACE');
+            setHaxeDefine('hscriptPos');
+
+            setHaxeDefine('CRASH_HANDLER');
+        }
+
+        if (hasHaxeDefine('FEATURE_DEBUG_TRACY'))
+        {
+            setHaxeDefine('HXCPP_TELEMETRY');
+            setHaxeDefine('HXCPP_TRACY');
+            setHaxeDefine('HXCPP_TRACY_MEMORY');
+            setHaxeDefine('HXCPP_TRACY_ON_DEMAND');
+            setHaxeDefine('absolute-paths');
+        }
+
+        setHaxeDefine('haxeui_dont_impose_base_class');
+        setHaxeDefine('haxeui_focus_out_on_click');
+
+        if (MODS_ALLOWED) setHaxeDefine('MODS_ALLOWED');
+        if (VIDEOS_ALLOWED && isCPP()) setHaxeDefine('VIDEOS_ALLOWED');
+        if (DISCORD_ALLOWED && isDesktop() && isCPP()) setHaxeDefine('DISCORD_ALLOWED');
+
+        if (isMobile())
+        {
+            setHaxeDefine('FLX_NO_SOUND_TRAY');
+        }
+
+         if (isRelease())
+        {
+            setHaxeDefine('analyzer-optimize');
+            setHaxeDefine('FLX_NO_DEBUG');
+            setHaxeDefine('NAPE_RELEASE_BUILD');
+        }
+
+        setHaxeDefine('lime_disable_assets_version');
+        setHaxeDefine('message.reporting', 'pretty');
+    }
+
+    function setupMacros()
+    {
+        addHaxeMacro("addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxSprite())', 'flixel.FlxSprite')");
+        addHaxeMacro("addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxBasic())', 'flixel.FlxBasic')");
+        addHaxeMacro("addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxCamera())', 'flixel.FlxCamera')");
+        addHaxeMacro("addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxText())', 'flixel.text.FlxText')");
+        addHaxeMacro("addMetadata('@:build(funkin.backend.macro.FlxMacro.FlxMacro.buildFlxGraphic())', 'flixel.graphics.FlxGraphic')");
+        addHaxeMacro("addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxDrawBaseItem())', 'flixel.graphics.tile.FlxDrawBaseItem')");
+        addHaxeMacro("addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxDrawItem())', 'flixel.graphics.tile.FlxDrawQuadsItem')");
+        addHaxeMacro("addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxDrawItem())', 'flixel.graphics.tile.FlxDrawTrianglesItem')");
+
+        addHaxeMacro("include('funkin')");
+        addHaxeMacro("include('flixel', true, ['flixel.addons.nape.*','flixel.addons.editors.*', 'flixel.addons.tile.FlxRayCastTilemap', 'flixel.system.macros'])");
+
+        addHaxeFlag('-dce no');
+    }
+
+    function setupLibraries()
+    {
+        addHaxelib('openfl');
+        addHaxelib('flixel');
+        addHaxelib('flixel-addons');
+        addHaxelib('flixel-ui');
+
+        addHaxelib('hscript-iris');
+
+        addHaxelib('flixel-animate');
+        addHaxelib('moonchart');
+
+        addHaxelib('haxeui-core');
+        addHaxelib('haxeui-flixel');
+
+        addHaxelib('funkin.vis');
+        addHaxelib('grig.audio');
+        addHaxelib('json2object');
+        addHaxelib('json5hx');
+
+        if (DISCORD_ALLOWED) addHaxelib('hxdiscord_rpc');
+        if (VIDEOS_ALLOWED) addHaxelib('hxvlc');
+
+        if (isMobile())
+        {
+            if (isAndroid()) addHaxelib('extension-androidtools');
+
+            addHaxelib('extension-haptics');
+        }
+
+        if (isDebug() && isCPP()) addHaxelib('hxcpp-debug-server');
+
+        if (isLinux()) addHaxelib('hxgamemode');
+    }
+
+    function setupAssets()
+    {
+        addAsset('LEGACY.md', 'CHANGELOG.md');
+
+        if (!hasHaxeDefine('ASSET_REDIRECT'))
+        {
+            addAssetPath('assets/legacy', 'assets', null, ['*'], [], false, 'assets');
+            addAssetPath('assets/legacy', 'assets', null, ['*'], [], false, 'assets');
+
+            // thank you ashley for not including the dlc with the source >:(
+            //if (MODS_ALLOWED && INCLUDE_DLC) addAssetPath('content/securitydlc', 'assets', null, ['*'], [], false);
+        }
+
+        if (isDesktop())
+        {
+            if (isWindows())
+                addAsset('projFiles/alsoft.ini', 'alsoft.ini');
+            else
+                addAsset('projFiles/alsoft.ini', 'alsoft.conf');
+        }
+    }
+
+    function setupIcons()
+    {
+        if (isAndroid())
+        {
+            // TODO: add support for android adaptive icons
+        }
+
+        addIcon('projFiles/icon/icon16.png', 16);
+        addIcon('projFiles/icon/icon32.png', 32);
+        addIcon('projFiles/icon/icon64.png', 64);
+        addIcon('projFiles/icon/iconOG.png');
+    }
+
+    function setupAndroid()
+    {
+        if (isRelease() && isBundle())
+            config.set('android.gradle-project-directory', 'bin-bundle');
+    }
+
+    function setupIOS()
+    {
+        config.set('ios.deployment', '16.0');
+    }
+
+    /**
+     * Isn't it annoying when HXCPP asks you to set it up every single time you install it or update it?
+     *
+     * Here we do it for you! cuz seriously this annoys me so much as well lol.
+     *
+     * *Also prevents GitHub workflows from failing*
+     */
+    function buildHXCPPTools()
+    {
+        var path:String = getLibraryPath('hxcpp');
+
+        if (path.toLowerCase().startsWith('error') || !FileSystem.exists(path))
+        {
+            error('Couldn\'t find the library "hxcpp" while targetting C++! Is it installed?');
+        }
+
+        var hxcppN:String = Path.join([path, "hxcpp.n"]);
+
+        if (FileSystem.exists(hxcppN))
+        {
+            // hxcpp build tools were already set up
+            return;
+        }
+
+        var toolsPath:String = Path.join([path, "tools/hxcpp"]);
+        var oldDirectory:String = Sys.getCwd();
+        Sys.setCwd(toolsPath);
+
+        var process = new Process('haxe', ['compile.hxml']);
+
+        if (process.exitCode() != 0)
+        {
+            info("Couldn't compile HXCPP Tools. Is HXCPP installed properly?");
+        }
+
+        process.close();
+
+        Sys.setCwd(oldDirectory);
+    }
+
+    public function addHaxelib(name:String, version:String = ''):Void
+    {
+        haxelibs.push(new Haxelib(name, version));
+    }
+
+    public function addHaxeFlag(value:String):Void
+    {
+        haxeflags.push(value);
+    }
+
+    public function addHaxeMacro(value:String):Void
+    {
+        addHaxeFlag('--macro $value');
+    }
+
+    public function setHaxeDefine(name:String, value:String = ''):Void
+    {
+        haxedefs.set(name, value);
+    }
+
+    public function hasHaxeDefine(name:String):Bool
+    {
+        return haxedefs.exists(name);
+    }
+
+    public function removeHaxeDefine(name:String):Void
+    {
+        haxedefs.remove(name);
+    }
+
+    public function addAssetLibrary(name:String, embed:Bool = false, preload:Bool = false):Void
+    {
+        libraries.push(new Library('', name, null, embed, preload, false, ''));
+    }
+
+    public function addAssetPath(path:String, ?rename:String, library:String, ?include:Array<String>, ?exclude:Array<String>, embed:Bool = false, ?padName:String):Void
+    {
+        if (path == '') return;
+        if (include == null) include = [];
+        if (exclude == null) exclude = [];
+
+        var targetPath:String = rename ?? path;
+        if (targetPath != '') targetPath += '/';
+
+        if (!FileSystem.exists(path))
+        {
+            error('Asset path "$path" doesn\'t exists!');
+        }
+        else if (!FileSystem.isDirectory(path))
+        {
+            error('Asset path "$path" is not a directory!');
+        }
+
+        for (file in FileSystem.readDirectory(path))
+        {
+            if (FileSystem.isDirectory('$path/$file'))
+            {
+                if (filter(file, ['*'], exclude))
+                {
+                    addAssetPath('$path/$file', '$targetPath$file', library, include, exclude, embed, padName);
+                }
+            }
+            else
+            {
+                if (filter(file, include, exclude))
+                {
+                    addAsset('$path/$file', '$targetPath$file', library, embed, padName);
+                }
+            }
+        }
+    }
+
+    public function addAsset(path:String, ?rename:String, ?library:String, embed:Bool = false, ?padName:String):Void
+    {
+        var asset:Asset = new Asset(path, rename, null, embed, true);
+        asset.library = library ?? 'default';
+
+        if (padName != null && isBundle())
+        {
+            asset.deliveryPackName = padName;
+        }
+
+        assets.push(asset);
+    }
+
+    public function addIcon(icon:String, ?size:Int):Void
+    {
+        icons.push(new Icon(icon, size));
+    }
+
+    public function recursiveCopyDirectory(source:String, destination:String, context:String = null, process:Bool = true, warnIfNotFound:Bool = true)
+    {
+        if (!FileSystem.exists(source))
+        {
+            if (warnIfNotFound)
+            {
+                warn('Could not find directory "$source"');
+            }
+
+            return;
+        }
+
+        for (item in FileSystem.readDirectory(source))
+        {
+            var itemSource:String = Path.combine(source, item);
+            var itemDestination:String = Path.combine(destination, item);
+
+            if (FileSystem.isDirectory(itemSource))
+            {
+                recursiveCopyDirectory(itemSource, itemDestination, context, process, warnIfNotFound);
+            }
+            else
+            {
+                FileSystem.createDirectory(Path.directory(itemDestination));
+                System.copyFile(itemSource, itemDestination, context, process);
+            }
+        }
+    }
+
+    public function isDesktop():Bool
+    {
+        return platformType == PlatformType.DESKTOP;
+    }
+
+    public function isMobile():Bool
+    {
+        return platformType == PlatformType.MOBILE;
+    }
+
+    public function isWeb():Bool
+    {
+        return platformType == PlatformType.WEB;
+    }
+
+    public function isConsole():Bool
+    {
+        return platformType == PlatformType.CONSOLE;
+    }
+
+    public function isWindows():Bool
+    {
+        return target == Platform.WINDOWS;
+    }
+
+    public function isLinux():Bool
+    {
+        return target == Platform.LINUX;
+    }
+
+    public function isMacOS():Bool
+    {
+        return target == Platform.MAC;
+    }
+
+    public function isHTML5():Bool
+    {
+        return target == Platform.HTML5;
+    }
+
+    public function isAndroid():Bool
+    {
+        return target == Platform.ANDROID;
+    }
+
+    public function isAndroidEmulator():Bool
+    {
+        return target == Platform.ANDROID && (targetFlags.exists('emulator') || targetFlags.exists('simulator'));
+    }
+
+    public function isIOS():Bool
+    {
+        return target == Platform.IOS;
+    }
+
+    public function isIOSSimulator():Bool
+    {
+        return target == Platform.IOS && targetFlags.exists('simulator');
+    }
+
+    public function isHashLink():Bool
+    {
+        return targetFlags.exists('hl');
+    }
+
+    public function isNeko():Bool
+    {
+        return targetFlags.exists('neko');
+    }
+
+    public function isCPP():Bool
+    {
+        return defines.exists('cpp');
+    }
+
+    public function isCSharp():Bool
+    {
+        return targetFlags.exists('cs');
+    }
+
+    public function isJava():Bool
+    {
+        return targetFlags.exists('java');
+    }
+
+    public function isNodeJS():Bool
+    {
+        return targetFlags.exists('nodejs');
+    }
+
+    public function isDebug():Bool
+    {
+        return this.debug;
+    }
+
+    public function isRelease():Bool
+    {
+        return !isDebug();
+    }
+
+    public function isBundle():Bool
+    {
+        return targetFlags.exists('bundle') && isAndroid();
+    }
+
+    public function isDisplay():Bool
+    {
+        return command == 'display';
+    }
+
+    public function isClean():Bool
+    {
+        return command == 'clean';
+    }
+
+    public function isBuild():Bool
+    {
+        return command == 'test' || command == 'build';
+    }
+
+    public function getLibraryPath(library:String):String
+    {
+        var process = new Process('haxelib', ['libpath', library]);
+        return process.stdout.readLine();
+    }
+
+    public function info(message:String)
+    {
+        if (!(isDisplay() || isClean()))
+        {
+            Sys.println('[INFO]: $message');
+        }
+    }
+
+    public function warn(message:String)
+    {
+        if (!(isDisplay() || isClean()))
+        {
+            Sys.println('[WARNING]: $message');
+        }
+    }
+
+    public function error(message:String)
+    {
+        Sys.stderr().write(Bytes.ofString('[ERROR] $message\n'));
+        Sys.exit(1);
+    }
+}

@@ -1,129 +1,364 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Build
 
-# Controls when the action will run. 
-on:
-  # Triggers the workflow on push or pull request events but only for the master branch
-  # push:
-  #   branches: [ main ]
-  # pull_request:
-  #   branches: [ main ]
+on: push
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-  # For release builds
-  workflow_call:
-    inputs:
-      buildFlags:
-        required: false
-        type: string
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  buildLinux:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      - uses: krdlab/setup-haxe@master
-        with:
-          haxe-version: 4.3.7
-      # Runs a set of commands using the runners shell
-      - name: install libvlc
-        run: |
-            sudo apt-get install vlc libvlc-dev libvlccore-dev vlc-bin
-      - name: Install libraries
-        run: |
-          haxelib setup ~/haxelib
-          haxelib install hxcpp > /dev/null
-          haxelib install hxpkg
-          haxelib run hxpkg install
-      - name: Compile
-        run: haxelib run lime build Project.xml linux -D ${{ inputs.buildFlags }}
-      - name: Publish Artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: nmv-linux
-          path: 'export/release/linux/bin' 
-  buildWindows:
+  build_windows:
+    name: Windows
     runs-on: windows-latest
-    
+    permissions: write-all
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2.3.0
+      - name: Checkout Repository
+        id: repo-check
+        uses: actions/checkout@v6
 
-      - uses: krdlab/setup-haxe@master
+      - name: Install Haxe
+        id: haxe-install
+        uses: krdlab/setup-haxe@v2
         with:
           haxe-version: 4.3.7
-      # Runs a set of commands using the runners shell
-      - name: Install libraries
-        run: |
-          haxelib setup C:/haxelib
-          haxelib install hxcpp > nul
-          haxelib install hxpkg
-          haxelib run hxpkg install
-      - name: Compile
-        run: haxelib run lime build windows -D ${{ inputs.buildFlags }}
-      - name: Publish Artifact
-        uses: actions/upload-artifact@main
+
+      - name: Restore Cache
+        id: cache-restore
+        uses: actions/cache/restore@v5
         with:
-          name: nmv-windows
-          path: export/release/windows/bin
-  buildMacIntel:
-    runs-on: macos-15
+          key: cache_windows
+          path: |
+            .haxelib/
+            export/release/windows/haxe/
+            export/release/windows/obj/
 
+      - name: Install / Update Libraries
+        id: lib-install
+        run: |
+          haxe -cp setup -D analyzer-optimize --run Setup --no-vscheck -quiet
+
+      - name: Build Game
+        id: game-compile
+        run: |
+          haxelib run lime build windows -release
+
+      - name: Upload Artifact
+        id: artifact-upload
+        uses: actions/upload-artifact@v6
+        with:
+          name: VS IMPOSTOR Pixel (Windows)
+          path: export/release/windows/bin/
+
+      - name: Clear old Cache
+        id: cache-clear
+        uses: actions/github-script@v8
+        if: ${{ steps.cache-restore.outputs.cache-hit == 'true' }}
+        with:
+          script: |
+            const caches = github.rest.actions.deleteActionsCacheByKey({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              key: "cache_windows"
+            });
+
+      - name: Save new Cache
+        id: cache-save
+        uses: actions/cache/save@v5
+        with:
+          key: cache_windows
+          path: |
+            .haxelib/
+            export/release/windows/haxe/
+            export/release/windows/obj/
+
+  build_linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    permissions: write-all
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@main
+      - name: Checkout Repository
+        id: repo-check
+        uses: actions/checkout@v6
 
-      - uses: krdlab/setup-haxe@master
+      - name: Install Haxe
+        id: haxe-install
+        uses: krdlab/setup-haxe@v2
         with:
           haxe-version: 4.3.7
-      # Runs a set of commands using the runners shell
-      - name: Install libraries
-        run: |
-          haxelib setup ~/haxelib
-          haxelib install hxcpp > /dev/null --quiet
-          haxelib install hxpkg
-          haxelib run hxpkg install
-      - name: Compile
-        run: |
-          haxelib run lime build mac -64 -D ${{ inputs.buildFlags || 'commit' }} -D HXCPP_M64
-      - name: Publish Artifact
-        uses: actions/upload-artifact@main
+
+      - name: Restore Cache
+        id: cache-restore
+        uses: actions/cache/restore@v5
         with:
-          name: nmv-macIntel
-          path: export/release/macos/bin
+          key: cache_linux
+          path: |
+            .haxelib/
+            export/release/linux/haxe/
+            export/release/linux/obj/
 
-  buildMacArm:
-    runs-on: macos-15
+      - name: Install LibVLC
+        id: libvlc-install
+        run: |
+          sudo apt-get install libvlc-dev libvlccore-dev
 
+      - name: Install / Update Libraries
+        id: lib-install
+        run: |
+          haxe -cp setup -D analyzer-optimize --run Setup -quiet
+
+      - name: Build Game
+        id: game-compile
+        run: |
+          haxelib run lime build linux -release
+
+      - name: Upload Artifact
+        id: artifact-upload
+        uses: actions/upload-artifact@v6
+        with:
+          name: VS IMPOSTOR Pixel (Linux)
+          path: export/release/linux/bin/
+
+      - name: Clear old Cache
+        id: cache-clear
+        uses: actions/github-script@v8
+        if: ${{ steps.cache-restore.outputs.cache-hit == 'true' }}
+        with:
+          script: |
+            const caches = github.rest.actions.deleteActionsCacheByKey({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              key: "cache_linux"
+            });
+
+      - name: Save new Cache
+        id: cache-save
+        uses: actions/cache/save@v5
+        with:
+          key: cache_linux
+          path: |
+            .haxelib/
+            export/release/linux/haxe/
+            export/release/linux/obj/
+
+  build_mac:
+    name: macOS
+    runs-on: macos-latest
+    permissions: write-all
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@main
+      - name: Checkout Repository
+        id: repo-check
+        uses: actions/checkout@v6
 
-      - uses: krdlab/setup-haxe@master
+      - name: Install Haxe
+        id: haxe-install
+        uses: krdlab/setup-haxe@v2
         with:
           haxe-version: 4.3.7
-      # Runs a set of commands using the runners shell
-      - name: Install libraries
-        run: |
-          haxelib setup ~/haxelib
-          haxelib install hxcpp > /dev/null --quiet
-          haxelib install hxpkg
-          haxelib run hxpkg install
-      - name: Compile
-        run: |
-          haxelib run lime build mac -arm64 -D ${{ inputs.buildFlags }} -D HXCPP_ARM64
-      - name: Publish Artifact
-        uses: actions/upload-artifact@main
+
+      - name: Restore Cache
+        id: cache-restore
+        uses: actions/cache/restore@v5
         with:
-          name: nmv-macArm
-          path: export/release/macos/bin
+          key: cache_mac
+          path: |
+            .haxelib/
+            export/release/macos/haxe/
+            export/release/macos/obj/
+
+      - name: Install / Update Libraries
+        id: lib-install
+        run: |
+          haxe -cp setup -D analyzer-optimize --run Setup -quiet
+
+      - name: Build Game
+        id: game-compile
+        run: |
+          arch -x86_64 haxelib run lime build mac -release
+
+      - name: Upload Artifact
+        id: artifact-upload
+        uses: actions/upload-artifact@v6
+        with:
+          name: VS IMPOSTOR Pixel (macOS)
+          path: export/release/macos/bin/
+
+      - name: Clear old Cache
+        id: cache-clear
+        uses: actions/github-script@v8
+        if: ${{ steps.cache-restore.outputs.cache-hit == 'true' }}
+        with:
+          script: |
+            const caches = github.rest.actions.deleteActionsCacheByKey({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              key: "cache_mac"
+            });
+
+      - name: Save new Cache
+        id: cache-save
+        uses: actions/cache/save@v5
+        with:
+          key: cache_mac
+          path: |
+            .haxelib/
+            export/release/macos/haxe/
+            export/release/macos/obj/
+
+  build_html5:
+    name: HTML5 (Web)
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout Repository
+        id: repo-check
+        uses: actions/checkout@v6
+
+      - name: Install Haxe
+        id: haxe-install
+        uses: krdlab/setup-haxe@v2
+        with:
+          haxe-version: 4.3.7
+
+      - name: Restore Cache
+        id: cache-restore
+        uses: actions/cache/restore@v5
+        with:
+          key: cache_html5
+          path: |
+            .haxelib/
+            export/release/html5/haxe/
+            export/release/html5/obj/
+
+      - name: Install / Update Libraries
+        id: lib-install
+        run: |
+          haxe -cp setup -D analyzer-optimize --run Setup -quiet
+
+      - name: Build Game
+        id: game-compile
+        run: |
+          haxelib run lime build html5 -release
+
+      - name: Upload Artifact
+        id: artifact-upload
+        uses: actions/upload-artifact@v6
+        with:
+          name: VS IMPOSTOR Pixel (HTML5)
+          path: export/release/html5/bin/
+
+      - name: Clear old Cache
+        id: cache-clear
+        uses: actions/github-script@v8
+        if: ${{ steps.cache-restore.outputs.cache-hit == 'true' }}
+        with:
+          script: |
+            const caches = github.rest.actions.deleteActionsCacheByKey({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              key: "cache_html5"
+            });
+
+      - name: Save new Cache
+        id: cache-save
+        uses: actions/cache/save@v5
+        with:
+          key: cache_html5
+          path: |
+            .haxelib/
+            export/release/html5/haxe/
+            export/release/html5/obj/
+
+  build_android:
+    name: Android
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout Repository
+        id: repo-check
+        uses: actions/checkout@v6
+
+      - name: Install Java JDK
+        id: jdk-install
+        uses: actions/setup-java@v5
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Install Android SDK
+        id: sdk-install
+        uses: android-actions/setup-android@v3.2.2
+
+      - name: Install Android NDK
+        id: ndk-install
+        uses: nttld/setup-ndk@v1.6.0
+        with:
+          ndk-version: r29
+
+      - name: Install Haxe
+        id: haxe-install
+        uses: krdlab/setup-haxe@v2
+        with:
+          haxe-version: 4.3.7
+
+      - name: Restore Cache
+        id: cache-restore
+        uses: actions/cache/restore@v5
+        with:
+          key: cache_android
+          path: |
+            .haxelib/
+            export/release/android/haxe/
+            export/release/android/obj/
+
+      - name: Install / Update Libraries
+        id: lib-install
+        run: |
+          haxe -cp setup -D analyzer-optimize --run Setup -quiet
+
+      - name: Setup Android
+        id: setup-android
+        run: |
+          haxelib run lime config ANDROID_SDK $ANDROID_SDK_ROOT
+          haxelib run lime config ANDROID_NDK_ROOT ${{ steps.ndk-install.outputs.ndk-path }}
+          haxelib run lime config JAVA_HOME ${{ env.JAVA_HOME }}
+          haxelib run lime config ANDROID_SETUP true
+
+      - name: Build Game
+        id: game-compile-lime
+        run: |
+          haxelib run lime build android -release
+
+      - name: Build APK
+        id: game-compile-gradle
+        run: |
+          chmod +x export/release/android/bin/gradlew
+
+          cd export/release/android/bin/
+          ./gradlew clean
+          ./gradlew assembleDebug
+          cd ../../../../
+
+      - name: Upload Artifact
+        id: artifact-upload
+        uses: actions/upload-artifact@v6
+        with:
+          name: VS IMPOSTOR Pixel (Android)
+          path: export/release/android/bin/app/build/outputs/apk/debug/
+
+      - name: Clear old Cache
+        id: cache-clear
+        uses: actions/github-script@v8
+        if: ${{ steps.cache-restore.outputs.cache-hit == 'true' }}
+        with:
+          script: |
+            const caches = github.rest.actions.deleteActionsCacheByKey({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              key: "cache_android"
+            });
+
+      - name: Save new Cache
+        id: cache-save
+        uses: actions/cache/save@v5
+        with:
+          key: cache_android
+          path: |
+            .haxelib/
+            export/release/android/haxe/
+            export/release/android/obj/

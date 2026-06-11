@@ -2,13 +2,15 @@ package;
 
 import openfl.Lib;
 import openfl.display.Sprite;
-import openfl.display.StageScaleMode;
 
 import flixel.FlxG;
-import flixel.FlxGame;
 import flixel.input.keyboard.FlxKey;
 
 import funkin.backend.DebugDisplay;
+
+#if linux
+import hxgamemode.GamemodeClient;
+#end
 
 @:nullSafety(Strict)
 class Main extends Sprite
@@ -28,11 +30,27 @@ class Main extends Sprite
 			initialState: funkin.states.TitleState
 		};
 		
-	static function __init__()
+	public static function main()
 	{
+		#if android
+		Sys.setCwd(haxe.io.Path.addTrailingSlash(extension.androidtools.content.Context.getExternalFilesDir()));
+		#elseif ios
+		Sys.setCwd(haxe.io.Path.addTrailingSlash(lime.system.System.documentsDirectory));
+		#end
+		
 		funkin.utils.MacroUtil.haxeVersionEnforcement();
 		
 		openfl.utils._internal.Log.level = openfl.utils._internal.Log.LogLevel.INFO;
+		
+		#if linux
+		GamemodeClient.request_start();
+		#end
+		
+		#if (CRASH_HANDLER && !debug)
+		funkin.backend.CrashHandler.init();
+		#end
+		
+		Lib.current.addChild(new Main());
 	}
 	
 	public function new()
@@ -41,10 +59,6 @@ class Main extends Sprite
 		
 		funkin.Mods.updateModList();
 		funkin.Mods.loadTopMod();
-		
-		#if (CRASH_HANDLER && !debug)
-		funkin.backend.CrashHandler.init();
-		#end
 		
 		initHaxeUI();
 		
@@ -90,7 +104,7 @@ class Main extends Sprite
 			#end
 			
 			Sys.println('GOOD BYE CRUEL WORLD');
-
+			
 			Sys.exit(0);
 		});
 		#end
