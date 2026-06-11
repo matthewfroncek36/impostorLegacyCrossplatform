@@ -30,7 +30,7 @@ jobs:
 
       - name: Install / Update Libraries
         id: lib-install
-        if: ${{ steps.cache-restore.outputs.cache-hit == 'false' }}
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
@@ -65,7 +65,7 @@ jobs:
       - name: Clear old Cache
         id: cache-clear
         uses: actions/github-script@v8
-        if: ${{ steps.cache-restore.outputs.cache-hit == 'true' }}
+        if: steps.cache-restore.outputs.cache-hit == 'true'
         with:
           script: |
             const caches = github.rest.actions.deleteActionsCacheByKey({
@@ -119,7 +119,7 @@ jobs:
 
       - name: Install / Update Libraries
         id: lib-install
-        if: ${{ steps.cache-restore.outputs.cache-hit == 'false' }}
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
@@ -154,7 +154,7 @@ jobs:
       - name: Clear old Cache
         id: cache-clear
         uses: actions/github-script@v8
-        if: ${{ steps.cache-restore.outputs.cache-hit == 'true' }}
+        if: steps.cache-restore.outputs.cache-hit == 'true'
         with:
           script: |
             const caches = github.rest.actions.deleteActionsCacheByKey({
@@ -200,7 +200,7 @@ jobs:
 
       - name: Install / Update Libraries
         id: lib-install
-        if: ${{ steps.cache-restore.outputs.cache-hit == 'false' }}
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
@@ -235,7 +235,7 @@ jobs:
       - name: Clear old Cache
         id: cache-clear
         uses: actions/github-script@v8
-        if: ${{ steps.cache-restore.outputs.cache-hit == 'true' }}
+        if: steps.cache-restore.outputs.cache-hit == 'true'
         with:
           script: |
             const caches = github.rest.actions.deleteActionsCacheByKey({
@@ -289,7 +289,7 @@ jobs:
 
       - name: Install / Update Libraries
         id: lib-install
-        if: ${{ steps.cache-restore.outputs.cache-hit == 'false' }}
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
@@ -324,7 +324,7 @@ jobs:
       - name: Clear old Cache
         id: cache-clear
         uses: actions/github-script@v8
-        if: ${{ steps.cache-restore.outputs.cache-hit == 'true' }}
+        if: steps.cache-restore.outputs.cache-hit == 'true'
         with:
           script: |
             const caches = github.rest.actions.deleteActionsCacheByKey({
@@ -395,7 +395,7 @@ jobs:
 
       - name: Install / Update Libraries
         id: lib-install
-        if: ${{ steps.cache-restore.outputs.cache-hit == 'false' }}
+        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           haxelib install hxpkg
           haxelib run hxpkg install
@@ -448,7 +448,7 @@ jobs:
       - name: Clear old Cache
         id: cache-clear
         uses: actions/github-script@v8
-        if: ${{ steps.cache-restore.outputs.cache-hit == 'true' }}
+        if: steps.cache-restore.outputs.cache-hit == 'true'
         with:
           script: |
             const caches = github.rest.actions.deleteActionsCacheByKey({
