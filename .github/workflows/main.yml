@@ -428,6 +428,14 @@ jobs:
           haxelib install hxpkg
           haxelib run hxpkg install
 
+      - name: Set up Android
+        id: setup-android
+        run: |
+          haxelib run lime config ANDROID_SDK $ANDROID_SDK_ROOT
+          haxelib run lime config ANDROID_NDK_ROOT ${{ steps.ndk-install.outputs.ndk-path }}
+          haxelib run lime config JAVA_HOME ${{ env.JAVA_HOME }}
+          haxelib run lime config ANDROID_SETUP true
+
       - name: Set up HXCPP
         id: setup-hxcpp
         if: steps.cache-restore.outputs.cache-hit != 'true'
@@ -435,14 +443,6 @@ jobs:
           cd ./.haxelib/hxcpp/git/tools/hxcpp/
           haxe compile.hxml
           cd ../../../../../
-
-      - name: Se Up Android
-        id: setup-android
-        run: |
-          haxelib run lime config ANDROID_SDK $ANDROID_SDK_ROOT
-          haxelib run lime config ANDROID_NDK_ROOT ${{ steps.ndk-install.outputs.ndk-path }}
-          haxelib run lime config JAVA_HOME ${{ env.JAVA_HOME }}
-          haxelib run lime config ANDROID_SETUP true
 
       - name: Rebuild Lime Tools
         id: fix-lime
