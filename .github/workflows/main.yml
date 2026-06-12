@@ -436,6 +436,15 @@ jobs:
           haxe compile.hxml
           cd ../../../../../
 
+      - name: Set up Android
+        id: setup-android
+        run: |
+          haxelib run lime config ANDROID_SDK $ANDROID_SDK_ROOT
+          haxelib run lime config ANDROID_NDK_ROOT ${{ steps.ndk-install.outputs.ndk-path }}
+          haxelib run lime config JAVA_HOME ${{ env.JAVA_HOME }}
+          haxelib run lime config ANDROID_SETUP true
+          haxelib run lime setup android -alias -y -nocffi -eval
+
       - name: Rebuild Lime Tools
         id: fix-lime
         if: steps.cache-restore.outputs.cache-hit != 'true'
@@ -447,14 +456,6 @@ jobs:
           cd ../../../
           haxelib run lime rebuild cpp
           haxelib run lime rebuild android
-
-      - name: Set up Android
-        id: setup-android
-        run: |
-          haxelib run lime config ANDROID_SDK $ANDROID_SDK_ROOT
-          haxelib run lime config ANDROID_NDK_ROOT ${{ steps.ndk-install.outputs.ndk-path }}
-          haxelib run lime config JAVA_HOME ${{ env.JAVA_HOME }}
-          haxelib run lime config ANDROID_SETUP true
 
       - name: Build Game
         id: game-compile-lime
