@@ -14,7 +14,9 @@ class FunkinGame extends flixel.FlxGame
 {
 	override function create(_:Event)
 	{
+		#if FLX_SOUND_TRAY
 		_customSoundTray = funkin.objects.FunkinSoundTray;
+		#end
 		
 		super.create(_);
 		

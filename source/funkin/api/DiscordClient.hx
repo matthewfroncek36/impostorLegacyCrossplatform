@@ -201,5 +201,7 @@ class DiscordClient
 	public static function init() {}
 	
 	static function set_rpcId(value:String):String return (rpcId = value);
+	
+	public static function check() {}
 }
 #end

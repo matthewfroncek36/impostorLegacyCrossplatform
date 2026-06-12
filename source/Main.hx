@@ -72,10 +72,6 @@ class Main extends Sprite
 		ClientPrefs.tryBindingSave('funkin');
 		
 		final game = new funkin.backend.FunkinGame(startMeta.width, startMeta.height, Init, startMeta.fps, startMeta.fps, true, startMeta.startFullScreen);
-		
-		// btw game has to be a variable for this to work ig - Orbyy
-		@:privateAccess
-		game._customSoundTray = funkin.objects.FunkinSoundTray;
 		addChild(game);
 		
 		// prevent accept button when alt+enter is pressed
