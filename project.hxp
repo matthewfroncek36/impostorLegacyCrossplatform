@@ -41,13 +41,9 @@ class Project extends HXProject
      * A list of languages supported by this application.
      */
     static final LANGUAGES:Array<String> = [
-        'en', 'en-US', 'en-GB',
-        'fr', 'de', 'cs',
-        'hu', 'id', 'ga',
-        'it', 'jp', 'ko',
-        'es', // spanish latam technically combines all spanish variants, but there's 18 variants so im not gonna list them all
-        'no', 'pl', 'pt',
-        'pt-BR', 'ro', 'tr'
+        'en', 'fr', 'de', 'cs', 'hu',
+        'id', 'ga', 'it', 'jp', 'ko',
+        'es', 'no', 'pl', 'pt', 'ro', 'tr'
     ];
 
     /**
