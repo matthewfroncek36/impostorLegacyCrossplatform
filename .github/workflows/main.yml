@@ -32,20 +32,12 @@ jobs:
         id: lib-install
         if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
-          haxelib install hxpkg
-          haxelib run hxpkg install
-
-      - name: Set up HXCPP
-        id: setup-hxcpp
-        if: steps.cache-restore.outputs.cache-hit != 'true'
-        run: |
-          cd ./.haxelib/hxcpp/git/tools/hxcpp/
-          haxe compile.hxml
-          cd ../../../../../
+          haxelib install hmm
+          haxelib run hmm install -q
+          cd .haxelib/hxcpp/git/tools/hxcpp && haxe compile.hxml
 
       - name: Rebuild Lime Tools
         id: fix-lime
-        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/lime/git/
           git submodule init
@@ -129,20 +121,12 @@ jobs:
         id: lib-install
         if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
-          haxelib install hxpkg
-          haxelib run hxpkg install
-
-      - name: Set up HXCPP
-        id: setup-hxcpp
-        if: steps.cache-restore.outputs.cache-hit != 'true'
-        run: |
-          cd ./.haxelib/hxcpp/git/tools/hxcpp/
-          haxe compile.hxml
-          cd ../../../../../
+          haxelib install hmm
+          haxelib run hmm install -q
+          cd .haxelib/hxcpp/git/tools/hxcpp && haxe compile.hxml
 
       - name: Rebuild Lime Tools
         id: fix-lime
-        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/lime/git/
           git submodule init
@@ -214,20 +198,12 @@ jobs:
         id: lib-install
         if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
-          haxelib install hxpkg
-          haxelib run hxpkg install
-
-      - name: Set up HXCPP
-        id: setup-hxcpp
-        if: steps.cache-restore.outputs.cache-hit != 'true'
-        run: |
-          cd ./.haxelib/hxcpp/git/tools/hxcpp/
-          haxe compile.hxml
-          cd ../../../../../
+          haxelib install hmm
+          haxelib run hmm install -q
+          cd .haxelib/hxcpp/git/tools/hxcpp && haxe compile.hxml
 
       - name: Rebuild Lime Tools
         id: fix-lime
-        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/lime/git/
           git submodule init
@@ -311,20 +287,12 @@ jobs:
         id: lib-install
         if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
-          haxelib install hxpkg
-          haxelib run hxpkg install
-
-      - name: Set up HXCPP
-        id: setup-hxcpp
-        if: steps.cache-restore.outputs.cache-hit != 'true'
-        run: |
-          cd ./.haxelib/hxcpp/git/tools/hxcpp/
-          haxe compile.hxml
-          cd ../../../../../
+          haxelib install hmm
+          haxelib run hmm install -q
+          cd .haxelib/hxcpp/git/tools/hxcpp && haxe compile.hxml
 
       - name: Rebuild Lime Tools
         id: fix-lime
-        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/lime/git/
           git submodule init
@@ -348,7 +316,6 @@ jobs:
       - name: Clear old Cache
         id: cache-clear
         uses: actions/github-script@v8
-        if: steps.cache-restore.outputs.cache-hit == 'true'
         with:
           script: |
             const caches = github.rest.actions.deleteActionsCacheByKey({
@@ -425,16 +392,9 @@ jobs:
         id: lib-install
         if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
-          haxelib install hxpkg
-          haxelib run hxpkg install
-
-      - name: Set up HXCPP
-        id: setup-hxcpp
-        if: steps.cache-restore.outputs.cache-hit != 'true'
-        run: |
-          cd ./.haxelib/hxcpp/git/tools/hxcpp/
-          haxe compile.hxml
-          cd ../../../../../
+          haxelib install hmm
+          haxelib run hmm install -q
+          cd .haxelib/hxcpp/git/tools/hxcpp && haxe compile.hxml
 
       - name: Set up Android
         id: setup-android
@@ -447,7 +407,6 @@ jobs:
 
       - name: Rebuild Lime Tools
         id: fix-lime
-        if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
           cd ./.haxelib/lime/git/
           git submodule init

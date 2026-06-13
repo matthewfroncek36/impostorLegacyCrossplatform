@@ -4,5 +4,5 @@ cd .haxelib/lime/git/
 git submodule sync
 git submodule update
 cd ../../../
-haxelib run lime rebuild cpp -release -clean
+haxelib run lime rebuild cpp
 pause
