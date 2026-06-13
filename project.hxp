@@ -343,10 +343,10 @@ class Project extends HXProject
             // TODO: add support for android adaptive icons
         }
 
-        addIcon('setup/icons/icon16.png', 16);
-        addIcon('setup/icons/icon32.png', 32);
-        addIcon('setup/icons/icon64.png', 64);
-        addIcon('setup/icons/iconOG.png');
+        addIcon('projFiles/icons/icon16.png', 16);
+        addIcon('projFiles/icons/icon32.png', 32);
+        addIcon('projFiles/icons/icon64.png', 64);
+        addIcon('projFiles/icons/iconOG.png');
     }
 
     function setupAndroid()
