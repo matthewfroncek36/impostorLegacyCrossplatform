@@ -34,7 +34,9 @@ jobs:
         run: |
           haxelib install hmm
           haxelib run hmm install -q
-          cd .haxelib/hxcpp/git/tools/hxcpp && haxe compile.hxml
+          cd ./.haxelib/hxcpp/git/tools/hxcpp/
+          haxe compile.hxml
+          cd ../../../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
@@ -123,7 +125,9 @@ jobs:
         run: |
           haxelib install hmm
           haxelib run hmm install -q
-          cd .haxelib/hxcpp/git/tools/hxcpp && haxe compile.hxml
+          cd ./.haxelib/hxcpp/git/tools/hxcpp/
+          haxe compile.hxml
+          cd ../../../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
@@ -200,7 +204,9 @@ jobs:
         run: |
           haxelib install hmm
           haxelib run hmm install -q
-          cd .haxelib/hxcpp/git/tools/hxcpp && haxe compile.hxml
+          cd ./.haxelib/hxcpp/git/tools/hxcpp/
+          haxe compile.hxml
+          cd ../../../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
@@ -289,7 +295,9 @@ jobs:
         run: |
           haxelib install hmm
           haxelib run hmm install -q
-          cd .haxelib/hxcpp/git/tools/hxcpp && haxe compile.hxml
+          cd ./.haxelib/hxcpp/git/tools/hxcpp/
+          haxe compile.hxml
+          cd ../../../../../
 
       - name: Rebuild Lime Tools
         id: fix-lime
@@ -394,7 +402,9 @@ jobs:
         run: |
           haxelib install hmm
           haxelib run hmm install -q
-          cd .haxelib/hxcpp/git/tools/hxcpp && haxe compile.hxml
+          cd ./.haxelib/hxcpp/git/tools/hxcpp/
+          haxe compile.hxml
+          cd ../../../../../
 
       - name: Set up Android
         id: setup-android
