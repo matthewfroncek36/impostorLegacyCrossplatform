@@ -316,7 +316,7 @@ jobs:
       - name: Build Game
         id: game-compile
         run: |
-          haxelib run lime build html5 -release
+          haxelib run lime build html5 -release -D DLC
 
       - name: Upload Artifact
         id: artifact-upload
