@@ -382,6 +382,7 @@ class ClientPrefs
 	
 	public static function backupSave(name:String = 'funkin'):Void // surely theres better ways right but whatever
 	{
+		#if sys
 		final path:String = SaveUtil.getPath('', FlxG.stage.application.meta.get('file') + '/$name');
 		final sav = path.withoutExtension();
 		
@@ -418,10 +419,12 @@ class ClientPrefs
 			
 			if (FileSystem.exists('$sav-backup.sol')) FileSystem.rename('$sav-backup.sol', '$sav-backup1.sol');
 		}
+		#end
 	}
 	
 	public static function tryBindingSave(name:String = 'funkin'):Void
 	{
+		#if sys
 		FlxG.save.bind(name, CoolUtil.getSavePath(), function(data:String, exception:haxe.Exception) {
 			final file = @:privateAccess FlxSave.validate(FlxG.stage.application.meta.get('file'));
 			final path = SaveUtil.getPath('', '$file/$name');
@@ -438,10 +441,14 @@ class ClientPrefs
 			
 			return attemptLoadBackup(name);
 		});
+		#else
+		FlxG.save.bind(name, CoolUtil.getSavePath());
+		#end
 	}
 	
 	public static function attemptLoadBackup(name:String = 'funkin'):Dynamic
 	{
+		#if sys
 		final path:String = SaveUtil.getPath('', FlxG.stage.application.meta.get('file') + '/funkin');
 		final sav = path.withoutExtension();
 		
@@ -486,6 +493,9 @@ class ClientPrefs
 		}
 		
 		return {};
+		#else
+		return {};
+		#end
 	}
 	
 	/**

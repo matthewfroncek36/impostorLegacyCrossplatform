@@ -193,7 +193,8 @@ class DebugDisplay extends Sprite
 		
 		if (displayType == FpsDisplayMode.ADVANCED)
 		{
-			var className = Type.getClassName(Type.getClass(FlxG.state));
+			final stateClass:Null<Class<Dynamic>> = FlxG.state == null ? null : Type.getClass(cast FlxG.state);
+			var className = stateClass == null ? 'N/A' : (Type.getClassName(stateClass) ?? 'N/A');
 			if (className.indexOf("ScriptedState") != -1)
 			{
 				var scripted:funkin.scripting.ScriptedState = cast FlxG.state;

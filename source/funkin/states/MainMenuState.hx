@@ -18,7 +18,9 @@ import funkin.objects.menu.AmongControls;
 import funkin.utils.ProgressionUtil;
 import funkin.states.options.*;
 import funkin.states.*;
+#if sys
 import funkin.states.editors.MasterEditorMenu;
+#end
 
 class MainMenuState extends MusicBeatState
 {
@@ -419,7 +421,9 @@ class MainMenuState extends MusicBeatState
 		starBG.x -= 4.5 * elapsed;
 		starFG.x -= 9 * elapsed;
 		
+		#if sys
 		if (FlxG.keys.justPressed.SEVEN) FlxG.switchState(new MasterEditorMenu());
+		#end
 		
 		if (FlxG.keys.firstJustPressed() != FlxKey.NONE) mouseMode = false;
 		if (FlxG.mouse.justMoved) mouseMode = true;

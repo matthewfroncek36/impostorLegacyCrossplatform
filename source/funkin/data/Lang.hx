@@ -77,10 +77,13 @@ class Lang
 	{
 		var mergedLang:Null<LanguageRaw> = null;
 		
-		var directories:Array<String> = [Paths.mods(), Paths.getCorePath()];
+		var directories:Array<String> = [Paths.getCorePath()];
 		
+		#if MODS_ALLOWED
+		directories.unshift(Paths.mods());
 		for (mod in Mods.enabled)
 			directories.push(Paths.mods('$mod/'));
+		#end
 			
 		for (dir in directories)
 		{

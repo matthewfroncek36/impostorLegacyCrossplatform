@@ -6,9 +6,7 @@ import flixel.FlxSprite;
 import funkin.data.Chart;
 import funkin.data.Song;
 import funkin.data.WeekData;
-#if VIDEOS_ALLOWED
 import funkin.video.FunkinVideoSprite;
-#end
 
 import openfl.utils.Assets as OpenFlAssets;
 

@@ -40,7 +40,9 @@ import funkin.objects.*;
 import funkin.data.*;
 import funkin.states.*;
 import funkin.states.substates.*;
+#if sys
 import funkin.states.editors.*;
+#end
 import funkin.game.modchart.*;
 import funkin.game.StoryMeta;
 import funkin.game.Countdown;
@@ -54,6 +56,7 @@ import funkin.video.FunkinVideoSprite;
 
 class PlayState extends MusicBeatState
 {
+	static final legacyNoteTypes:Array<String> = ['', 'Alt Animation', 'Hey!', 'Hurt Note', 'GF Sing', 'No Animation', 'Ghost Note'];
 	public static var STRUM_X:Float = 42; // redundant
 	public static var STRUM_X_MIDDLESCROLL:Float = -278; // redundant
 	
@@ -1473,7 +1476,7 @@ class PlayState extends MusicBeatState
 			for (songNotes in section.sectionNotes)
 			{
 				var type:Dynamic = songNotes[3];
-				if (!Std.isOfType(type, String)) type = ChartEditorState.noteTypeList[type];
+				if (!Std.isOfType(type, String)) type = legacyNoteTypes[type];
 				
 				if (!noteTypeMap.exists(type)) noteTypeMap.set(type, true);
 			}
@@ -1588,7 +1591,7 @@ class PlayState extends MusicBeatState
 				var oldNote:Note = null;
 				
 				var type:Dynamic = songNotes[3];
-				if (!Std.isOfType(type, String)) type = ChartEditorState.noteTypeList[type];
+				if (!Std.isOfType(type, String)) type = legacyNoteTypes[type];
 				
 				var susLength:Float = songNotes[2];
 				var swagNote = new QueueNote(daStrumTime, susLength, daNoteData, type, false, playfield);
@@ -2212,6 +2215,7 @@ class PlayState extends MusicBeatState
 	
 	function openChartEditor():Void
 	{
+		#if sys
 		ChartEditorState._song = SONG;
 		FlxG.camera.followLerp = 0;
 		
@@ -2223,10 +2227,12 @@ class PlayState extends MusicBeatState
 		chartingMode = true;
 		
 		DiscordClient.changePresence('Chart Editor');
+		#end
 	}
 	
 	function openCharacterEditor():Void
 	{
+		#if sys
 		FlxG.camera.followLerp = 0;
 		
 		persistentUpdate = false;
@@ -2237,6 +2243,7 @@ class PlayState extends MusicBeatState
 		FlxG.switchState(() -> new CharacterEditorState(SONG.player2, true));
 		
 		DiscordClient.changePresence("Character Editor", null, null, true);
+		#end
 	}
 	
 	public function updateScoreBar(miss:Bool = false):Void

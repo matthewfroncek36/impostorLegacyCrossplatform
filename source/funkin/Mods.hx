@@ -109,10 +109,12 @@ class Mods
 	 */
 	static function ensureModsListExists()
 	{
+		#if MODS_ALLOWED
 		if (!FunkinAssets.exists('modsList.txt'))
 		{
 			File.saveContent('modsList.txt', '');
 		}
+		#end
 	}
 	
 	public static var globalMods:Array<String> = [];
@@ -186,7 +188,7 @@ class Mods
 	public static inline function directoriesWithFile(path:String, fileToFind:String, mods:Bool = true)
 	{
 		var foldersToCheck:Array<String> = [];
-		if (FileSystem.exists(path + fileToFind)) foldersToCheck.push(path + fileToFind);
+		if (FunkinAssets.exists(path + fileToFind)) foldersToCheck.push(path + fileToFind);
 		
 		#if MODS_ALLOWED
 		if (mods)
@@ -297,6 +299,7 @@ class Mods
 	
 	public static function writeModList():Void
 	{
+		#if MODS_ALLOWED
 		// Now save file
 		var fileStr:String = '';
 		for (mod in all)
@@ -307,6 +310,7 @@ class Mods
 		}
 		
 		File.saveContent('modsList.txt', fileStr);
+		#end
 	}
 	
 	public static function loadTopMod()

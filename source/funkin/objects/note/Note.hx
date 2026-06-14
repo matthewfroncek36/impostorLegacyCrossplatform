@@ -11,7 +11,9 @@ import funkin.game.shaders.RGBShader;
 import funkin.objects.Character;
 import funkin.scripts.*;
 import funkin.states.*;
+#if sys
 import funkin.states.editors.ChartEditorState;
+#end
 
 typedef EventNote =
 {
@@ -455,7 +457,11 @@ class Note extends RGBSprite implements funkin.game.modchart.IModNote
 		
 		if (animName != null) playAnim(animName, true);
 		
-		if (inEditor && !skipScale) setGraphicSize(ChartEditorState.GRID_SIZE, ChartEditorState.GRID_SIZE);
+		if (inEditor && !skipScale)
+		{
+			final gridSize = #if sys ChartEditorState.GRID_SIZE #else 40 #end;
+			setGraphicSize(gridSize, gridSize);
+		}
 		
 		baseScale.copyFrom(scale);
 		

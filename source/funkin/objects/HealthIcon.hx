@@ -24,7 +24,9 @@ class HealthIcon extends FlxSprite
 	 */
 	public var characterName(default, null):String = '';
 	
+	#if sys
 	@:allow(funkin.states.editors.ChartEditorState)
+	#end
 	var updateOffset:Bool = true;
 	
 	var iconOffsets:Array<Float> = [0, 0];

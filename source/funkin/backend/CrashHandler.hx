@@ -25,17 +25,19 @@ class CrashHandler
 		throw Std.string(message);
 	}
 	
+	@:nullSafety(Off)
 	static function onUncaughtError(event:UncaughtErrorEvent)
 	{
 		FlxTransitionableState.skipNextTransIn = FlxTransitionableState.skipNextTransOut = true;
 		
 		var curFlxState:String = 'N/A';
 		
-		if (FlxG.state != null)
+		final state = FlxG.state;
+		if (state != null)
 		{
-			final cl = Type.getClass(FlxG.state);
+			final cl:Null<Class<Dynamic>> = Type.getClass(cast state);
 			if (cl != null) curFlxState = 'FlxState: ' + (Type.getClassName(cl) ?? 'N/A');
-			FlxG.state.persistentUpdate = FlxG.state.persistentDraw = false;
+			state.persistentUpdate = state.persistentDraw = false;
 		}
 		
 		var message:String = Std.string(event.error);

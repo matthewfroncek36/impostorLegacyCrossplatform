@@ -218,7 +218,7 @@ class Project extends HXProject
         setHaxeDefine('haxeui_dont_impose_base_class');
         setHaxeDefine('haxeui_focus_out_on_click');
 
-        if (MODS_ALLOWED) setHaxeDefine('MODS_ALLOWED');
+        if (MODS_ALLOWED && isDesktop()) setHaxeDefine('MODS_ALLOWED');
         if (VIDEOS_ALLOWED && isCPP()) setHaxeDefine('VIDEOS_ALLOWED');
         if (DISCORD_ALLOWED && isDesktop() && isCPP()) setHaxeDefine('DISCORD_ALLOWED');
 
@@ -249,7 +249,7 @@ class Project extends HXProject
         addHaxeMacro("addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxDrawItem())', 'flixel.graphics.tile.FlxDrawQuadsItem')");
         addHaxeMacro("addMetadata('@:build(funkin.backend.macro.FlxMacro.buildFlxDrawItem())', 'flixel.graphics.tile.FlxDrawTrianglesItem')");
 
-        addHaxeMacro("include('funkin')");
+        if (!isWeb()) addHaxeMacro("include('funkin')");
         addHaxeMacro("include('flixel', true, ['flixel.addons.nape.*','flixel.addons.editors.*', 'flixel.addons.tile.FlxRayCastTilemap', 'flixel.system.macros'])");
 
         addHaxeFlag('-dce no');
@@ -311,6 +311,7 @@ class Project extends HXProject
     {
         addAsset('LEGACY.md', 'CHANGELOG.md');
 
+        addAssetPath('content/securitydlc', 'assets', null, ['*'], [], false, 'assets');
         addAssetPath('assets/legacy', 'assets', null, ['*'], [], false, 'assets');
         addAssetPath('assets/embeds', 'assets', null, ['*'], [], true, 'assets');
 

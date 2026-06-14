@@ -62,10 +62,10 @@ class Splash extends FlxState
 	
 	function logoFunc()
 	{
-		var folder:Array<String> = [];
-		if (!FileSystem.isDirectory('assets/images/branding') || (folder = FileSystem.readDirectory('assets/images/branding')).length == 0) return finish();
-		
-		folder = folder.filter(str -> !FileSystem.isDirectory('assets/images/branding/$str'));
+		final brandingPath = Paths.getCorePath('images/branding/');
+		var folder = FunkinAssets.readDirectory(brandingPath);
+		if (folder.length == 0) return finish();
+		folder = folder.filter(str -> !FunkinAssets.isDirectory('$brandingPath$str'));
 		
 		var img = FlxG.random.getObject(folder);
 		

@@ -9,7 +9,9 @@ import flixel.util.FlxStringUtil;
 
 import funkin.data.Chart;
 import funkin.backend.Difficulty;
+#if sys
 import funkin.states.editors.ChartEditorState;
+#end
 import funkin.states.*;
 import funkin.states.substates.*;
 import funkin.utils.MathUtil;
@@ -753,11 +755,15 @@ class FreeplayState extends AmongUIState
 		
 		if (ret != null) return trace('THIS CHART IS INVALID! FUCK!');
 		
-		final switchToCharter:Bool = (FlxG.keys.pressed.SHIFT && ClientPrefs.inDevMode);
+		final switchToCharter:Bool = #if sys (FlxG.keys.pressed.SHIFT && ClientPrefs.inDevMode) #else false #end;
 		
+		#if sys
 		if (switchToCharter) ChartEditorState._song = PlayState.SONG;
 		
 		FlxG.switchState(switchToCharter ? ChartEditorState.new : PlayState.new);
+		#else
+		FlxG.switchState(PlayState.new);
+		#end
 	}
 	
 	override function destroy()

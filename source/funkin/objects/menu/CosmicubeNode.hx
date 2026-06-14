@@ -305,9 +305,13 @@ class CosmicubeNode extends BaseNode
 	
 	inline function hasUpdogSaveData():Bool
 	{
+		#if sys
 		final appDataPath = Sys.getEnv("AppData");
 		if (appDataPath == null || appDataPath.length == 0) return false;
 		return FileSystem.isDirectory('$appDataPath/UpdogTeam');
+		#else
+		return false;
+		#end
 	}
 	
 	public inline function canProgress():Bool

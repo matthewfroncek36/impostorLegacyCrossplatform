@@ -68,31 +68,36 @@ class CosmicubeData
 		cosmicubeMetas.clear();
 		cosmicubeItems.clear();
 		
-		var directories:Array<String> = [Paths.mods(), Paths.getCorePath()];
+		var directories:Array<String> = [Paths.getCorePath()];
 		
+		#if MODS_ALLOWED
+		directories.unshift(Paths.mods());
 		for (mod in Mods.parseList().enabled)
 			directories.push(Paths.mods('$mod/'));
+		#end
 			
 		// parse items stuff
 		for (dir in directories)
 		{
 			var modFolder:Null<String> = null;
+			#if MODS_ALLOWED
 			if (dir.startsWith(Paths.mods()))
 			{
 				modFolder = dir.substring(Paths.mods().length, dir.length - 1);
 			}
+			#end
 			
 			var dir:String = '${dir}data/cosmicube/';
 			
 			if (!FunkinAssets.exists(dir)) continue;
 			
-			for (file in FileSystem.readDirectory(dir))
+			for (file in FunkinAssets.readDirectory(dir))
 			{
 				if (!file.endsWith('.json')) continue;
 				
 				var fileName:String = file.substr(0, file.indexOf('.json'));
 				
-				var meta:CosmicubeMetadata = haxe.Json.parse(File.getContent('$dir/$file'));
+				var meta:CosmicubeMetadata = haxe.Json.parse(FunkinAssets.getContent('$dir/$file'));
 				meta.fileName = fileName;
 				meta.mod = modFolder;
 				
@@ -109,13 +114,13 @@ class CosmicubeData
 		
 		if (!FunkinAssets.exists(dir) || !FunkinAssets.isDirectory(dir)) return list;
 		
-		for (file in FileSystem.readDirectory(dir))
+		for (file in FunkinAssets.readDirectory(dir))
 		{
 			if (!file.endsWith('.json')) continue;
 			
 			var fileName:String = file.substr(0, file.indexOf('.json'));
 			
-			var data:ShopItemData = haxe.Json.parse(File.getContent('$dir/$file'));
+			var data:ShopItemData = haxe.Json.parse(FunkinAssets.getContent('$dir/$file'));
 			data.currency = meta.currency;
 			data.fileName = fileName;
 			

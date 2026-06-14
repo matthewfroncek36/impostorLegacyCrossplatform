@@ -55,8 +55,10 @@ class FunkinScript extends IrisEx implements IFlxDestroyable
 	{
 		var prefix = '[$prefix$fileName:$lineNumber]';
 		
+		#if MODS_ALLOWED
 		final modPath:String = Paths.mods(Mods.currentModDirectory + '/');
 		if (fileName.contains(modPath)) prefix = prefix.replace(modPath, '');
+		#end
 		
 		return '$prefix - $x';
 	}

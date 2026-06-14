@@ -1,5 +1,6 @@
 package funkin.video;
 
+#if VIDEOS_ALLOWED
 // sigh rework coming again soon
 import hxvlc.flixel.FlxVideoSprite;
 import hxvlc.util.Location;
@@ -254,3 +255,119 @@ class FunkinVideoSprite extends FlxVideoSprite
 			if (video != null && video.exists && video.alive) func(video);
 	}
 }
+#else
+import flixel.FlxSprite;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
+
+/**
+ * No-op video sprite for targets where the native hxvlc backend is unavailable.
+ */
+class FunkinVideoSprite extends FlxSprite
+{
+	public static final instances:Array<FunkinVideoSprite> = [];
+	public static final looping:String = ':input-repeat=65535';
+	public static final muted:String = ':no-audio';
+
+	public static function init():Void {}
+
+	public var tiedToGame:Bool = true;
+	public var time(default, set):Float = 0;
+	public var length(default, null):Float = -1;
+	public var playing(default, null):Bool = false;
+	public var percent(default, null):Float = 0;
+
+	var endCallbacks:Array<Void->Void> = [];
+	var startCallbacks:Array<Void->Void> = [];
+
+	public function new(x:Float = 0, y:Float = 0, oneTimeUse:Bool = true)
+	{
+		super(x, y);
+		makeGraphic(1, 1, FlxColor.TRANSPARENT);
+		instances.push(this);
+	}
+
+	public function load(location:Dynamic, ?options:Array<String>):Bool
+	{
+		FlxTimer.wait(0, dispatchEnd);
+		return false;
+	}
+
+	public function delayAndStart(delay:Float = 0):Void
+	{
+		FlxTimer.wait(delay, play);
+	}
+
+	public function play():Bool
+	{
+		playing = true;
+		for (callback in startCallbacks) callback();
+		return false;
+	}
+
+	public function stop():Void
+	{
+		playing = false;
+	}
+
+	public function pause():Void
+	{
+		playing = false;
+	}
+
+	public function resume():Void
+	{
+		playing = true;
+	}
+
+	public function onEnd(func:Void->Void, once:Bool = false, priority:Int = 0):Void
+	{
+		endCallbacks.push(func);
+	}
+
+	public function onStart(func:Void->Void, once:Bool = false, priority:Int = 0):Void
+	{
+		startCallbacks.push(func);
+	}
+
+	public function onFormat(func:Void->Void, once:Bool = false, priority:Int = 0):Void
+	{
+		func();
+	}
+
+	function dispatchEnd():Void
+	{
+		if (!exists) return;
+
+		playing = false;
+		final callbacks = endCallbacks.copy();
+		endCallbacks.resize(0);
+		for (callback in callbacks) callback();
+	}
+
+	function set_time(value:Float):Float
+	{
+		return time = value;
+	}
+
+	override public function destroy():Void
+	{
+		instances.remove(this);
+		endCallbacks.resize(0);
+		startCallbacks.resize(0);
+		super.destroy();
+	}
+
+	public static function forEach(func:FunkinVideoSprite->Void):Void
+	{
+		for (video in instances)
+			if (video != null) func(video);
+	}
+
+	public static function forEachAlive(func:FunkinVideoSprite->Void):Void
+	{
+		for (video in instances)
+			if (video != null && video.exists && video.alive) func(video);
+	}
+}
+#end
