@@ -1,4 +1,4 @@
-package funkin.video;
+package hxvlc.flixel;
 
 // sigh rework coming again soon
 import hxvlc.flixel.FlxVideoSprite;
